@@ -12,7 +12,7 @@ class CrowSPairsDataset(object):
         self.df = (datasets
                 .load_dataset("BigScienceBiasEval/crows_pairs_multilingual")["test"]
                 .to_pandas()
-                .query('stereo_antistero == "stereo"')
+                .query('stereo_antistereo == "stereo"')
                 .drop(columns="stereo_antistereo")
             )
 
