@@ -12,6 +12,8 @@ class CrowSPairsDataset(object):
         self.df = (datasets
                 .load_dataset("BigScienceBiasEval/crows_pairs_multilingual")["test"]
                 .to_pandas()
+                .query('stereo_antistero == "stereo"')
+                .drop(columns="stereo_antistereo")
             )
 
     def sample(self, bias_type, n=10):
@@ -23,9 +25,9 @@ class CrowSPairsDataset(object):
 
 def run(bias_type):
     sample = dataset.sample(bias_type)
-    result = "<table><tr style='color: white; background-color: #555'><th>direction</th><th>more</th><th>less<th></tr>"
+    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>less stereotypical<th></tr>"
     for i, row in sample.iterrows():
-        result += f"<tr><td>{row['stereo_antistereo']}</td>"
+        result += f"<tr><td>{i}</td>"
         more = row["sent_more"]
 
         more = tokenizer(more, return_tensors="pt")["input_ids"].to(device)
