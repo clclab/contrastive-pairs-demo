@@ -34,22 +34,22 @@ def run(bias_type):
         with torch.no_grad():
             out_more = model(more, labels=more.clone())
             score_more = out_more["loss"]
-            perplexity_more = -torch.exp(score_more).item()
+            perplexity_more = torch.exp(score_more).item()
 
         less = row["sent_less"]
         less = tokenizer(less, return_tensors="pt")["input_ids"].to(device)
         with torch.no_grad():
             out_less = model(less, labels=less.clone())
             score_less = out_less["loss"]
-            perplexity_less = -torch.exp(score_less).item()
+            perplexity_less = torch.exp(score_less).item()
             if perplexity_more > perplexity_less:
                 shade = round(
                     abs((perplexity_more - perplexity_less) / perplexity_more), 2
                 )
-                result += f"<td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em;'>{row['sent_less']}</td></tr>"
+                result += f"<td style='padding: 0 1em;)'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_less']}</td></tr>"
             else:
                 shade = abs((perplexity_less - perplexity_more) / perplexity_less)
-                result += f"<td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_less']}</td></tr>"
+                result += f"<td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em;'>{row['sent_less']}</td></tr>"
     result += "</table>"
     return result
 
