@@ -68,7 +68,7 @@ iface = gradio.Interface(
     fn=run,
     inputs=bias_type_sel,
     outputs="html",
-    title="CROW-S bias",
+    title="Detecting stereotypes in language models using CrowS-Pairs",
     description="Shows which of each pair from 10 random samples in the CROW-S dataset gpt-2 thinks is more likely",
 )
 
