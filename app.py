@@ -68,8 +68,8 @@ iface = gradio.Interface(
     fn=run,
     inputs=bias_type_sel,
     outputs="html",
-    title="CROW-S bias",
-    description="Shows which of each pair from 10 random samples in the CROW-S dataset gpt-2 thinks is more likely",
+    title="Detecting stereotypes in the GPT-2 language model using CrowS-Pairs",
+    description="GPT-2 is a language model which can score how likely it is that some text is a valid English sentence: not only grammaticality, but also the 'meaning' of the sentence is part of this score. CrowS-Pairs is a dataset with pairs of more and less stereotypical examples for different social groups (e.g., gender and nationality stereotypes). We sample 10 random pairs from CrowS-Pairs and show whether the stereotypical example gets a higher score ('is more likely'). If GPT-2 systematically prefers the stereotypical examples, it has probably learnt these stereotypes from the training data.",
 )
 
 iface.launch()
