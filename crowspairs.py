@@ -4,18 +4,15 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 from evaluation.tasks.auto_task import AutoTask
+import datasets
 
 
 class CrowSPairsDataset(Dataset):
     def __init__(self):
         super().__init__()
 
-        # TODO: maybe implement using HuggingFace Datasets
-        # https://huggingface.co/datasets/crows_pairs
-
-        # Load CrowS-Pairs dataset from URL
-        url = "https://raw.githubusercontent.com/nyu-mll/crows-pairs/master/data/crows_pairs_anonymized.csv"
-        df = pd.read_csv(url)
+        dataset = datasets.load_dataset("BigScienceBiasEval/crows_pairs_multilingual")
+        df = dataset['test'].to_pandas()
 
         # if direction is stereo, sent1, sent2 are sent_more, sent_less respectively,
         # otherwise the other way around
