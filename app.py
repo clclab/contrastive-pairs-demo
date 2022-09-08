@@ -46,10 +46,10 @@ def run(bias_type):
                 shade = round(
                     abs((perplexity_more - perplexity_less) / perplexity_more), 2
                 )
-                result += f"<td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_less']}</td></tr>"
+                result += f"<td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em;'>{row['sent_less']}</td></tr>"
             else:
                 shade = abs((perplexity_less - perplexity_more) / perplexity_less)
-                result += f"<td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_less']}</td></tr>"
+                result += f"<td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_less']}</td></tr>"
     result += "</table>"
     return result
 
