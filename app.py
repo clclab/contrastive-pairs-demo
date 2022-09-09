@@ -73,6 +73,9 @@ with open("description.md") as fh:
 
 with open("notice.md") as fh:
     notice = fh.read()
+    
+with open("results.md") as fh:
+    results = fh.read()
 
 with gradio.Blocks() as iface:
     gradio.Markdown(desc)
@@ -85,5 +88,7 @@ with gradio.Blocks() as iface:
     but.click(run, inp, out)
     with gradio.Accordion("A note about explainability models"):
         gradio.Markdown(notice)
+    with gradio.Accordion("Results for English and French BERT language models"):
+        gradio.Markdown(results)
 
 iface.launch()
