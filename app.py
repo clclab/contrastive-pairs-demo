@@ -68,18 +68,22 @@ dataset = CrowSPairsDataset()
 
 bias_type_sel = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
 
-iface = gradio.Interface(
-    fn=run,
-    inputs=bias_type_sel,
-    outputs="html",
-    title="Detecting stereotypes in the GPT-2 language model using CrowS-Pairs",
-    description="""GPT-2 is a language model which can score how likely it is that some text is a valid English sentence: not only grammaticality, but also the 'meaning' of the sentence is part of this score. 
-    CrowS-Pairs is a dataset with pairs of more and less stereotypical examples for different social groups (e.g., gender and nationality stereotypes). 
-    We sample 10 random pairs from CrowS-Pairs and show whether the stereotypical example gets a higher score ('is more likely'). 
-    If GPT-2 systematically prefers the stereotypical examples, it has probably learnt these stereotypes from the training data.
-    **DISCLAIMER: How to measure bias in language models is not trivial and an active area of research. 
-    CrowS-Pairs is only one bias benchmark, and here you can probably find some examples that are nonsensical, with typos, or containing stereotypes that are only relevant in the American cultural context.**
-    """,
-)
+with open("description.md") as fh:
+    desc = fh.read()
+
+with open("notice.md") as fh:
+    notice = fh.read()
+
+with gradio.Blocks() as iface:
+    gradio.Markdown(desc)
+    with gradio.Row(equal_height=True):
+        with gradio.Column(scale=4):
+            inp = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
+        with gradio.Column(scale=1):
+            but = gradio.Button("Sample")
+    out = gradio.HTML()
+    but.click(run, inp, out)
+    with gradio.Accordion("A note about explainability models"):
+        gradio.Markdown(notice)
 
 iface.launch()
