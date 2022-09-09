@@ -67,6 +67,7 @@ tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
 dataset = CrowSPairsDataset()
 
 bias_type_sel = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
+
 with open("description.md") as fh:
     desc = fh.read()
 
