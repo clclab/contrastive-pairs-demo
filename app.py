@@ -77,7 +77,8 @@ iface = gradio.Interface(
     CrowS-Pairs is a dataset with pairs of more and less stereotypical examples for different social groups (e.g., gender and nationality stereotypes). 
     We sample 10 random pairs from CrowS-Pairs and show whether the stereotypical example gets a higher score ('is more likely'). 
     If GPT-2 systematically prefers the stereotypical examples, it has probably learnt these stereotypes from the training data.
-    **DISCLAIMER: How to measure bias in language models is not trivial and an active area of research.**
+    **DISCLAIMER: How to measure bias in language models is not trivial and an active area of research. 
+    CrowS-Pairs is only one bias benchmark, and here you can probably find some examples that are nonsensical, with typos, or containing stereotypes that are only relevant in the American cultural context.**
     """,
 )
 
