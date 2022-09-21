@@ -77,7 +77,7 @@ with open("notice.md") as fh:
 with open("results.md") as fh:
     results = fh.read()
 
-with gradio.Blocks() as iface:
+with gradio.Blocks(title="Detecting stereotypes in the GPT-2 language model using CrowS-Pairs") as iface:
     gradio.Markdown(desc)
     with gradio.Row(equal_height=True):
         with gradio.Column(scale=4):
