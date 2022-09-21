@@ -1,6 +1,7 @@
 import torch
 import datasets
 import gradio
+import pandas
 
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 
@@ -23,10 +24,9 @@ class CrowSPairsDataset(object):
         return self.df.bias_type.unique().tolist()
 
 
-def run(bias_type):
-    sample = dataset.sample(bias_type)
+def run(df):
     result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>less stereotypical<th></tr>"
-    for i, row in sample.iterrows():
+    for i, row in df.iterrows():
         result += f"<tr><td>{i}</td>"
         more = row["sent_more"]
 
@@ -55,6 +55,17 @@ def run(bias_type):
     result += "</table>"
     return result
 
+def sample_and_run(bias_type):
+    sample = dataset.sample(bias_type)
+    return run(sample)
+
+def manual_run(more, less):
+    df = pandas.DataFrame.from_dict({
+            'sent_more': [more],
+            'sent_less': [less],
+            'bias_type': ["manual"],
+        })
+    return run(df)
 
 if torch.cuda.is_available():
     device = torch.device("cuda")
@@ -71,9 +82,12 @@ bias_type_sel = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
 with open("description.md") as fh:
     desc = fh.read()
 
+with open("descr-2.md") as fh:
+    desc2 = fh.read()
+
 with open("notice.md") as fh:
     notice = fh.read()
-    
+
 with open("results.md") as fh:
     results = fh.read()
 
@@ -81,11 +95,21 @@ with gradio.Blocks(title="Detecting stereotypes in the GPT-2 language model usin
     gradio.Markdown(desc)
     with gradio.Row(equal_height=True):
         with gradio.Column(scale=4):
-            inp = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
+            bias_sel = gradio.Dropdown(label="Bias Type", choices=dataset.bias_types())
         with gradio.Column(scale=1):
             but = gradio.Button("Sample")
+    gradio.Markdown(desc2)
+    with gradio.Row(equal_height=True):
+        with gradio.Column(scale=2):
+            more = gradio.Textbox(label="More stereotypical")
+        with gradio.Column(scale=2):
+            less = gradio.Textbox(label="Less stereotypical")
+        with gradio.Column(scale=1):
+            manual = gradio.Button("Run")
     out = gradio.HTML()
-    but.click(run, inp, out)
+    but.click(sample_and_run, bias_sel, out)
+    manual.click(manual_run, [more, less], out)
+
     with gradio.Accordion("A note about explainability models"):
         gradio.Markdown(notice)
     with gradio.Accordion("Results for English and French BERT language models"):
