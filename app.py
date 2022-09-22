@@ -110,7 +110,7 @@ with gradio.Blocks(title="Detecting stereotypes in the GPT-2 language model usin
     but.click(sample_and_run, bias_sel, out)
     manual.click(manual_run, [more, less], out)
 
-    with gradio.Accordion("A note about explainability models"):
+    with gradio.Accordion("Some more details"):
         gradio.Markdown(notice)
     with gradio.Accordion("Results for English and French BERT language models"):
         gradio.Markdown(results)
