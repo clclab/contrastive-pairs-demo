@@ -25,33 +25,53 @@ class CrowSPairsDataset(object):
 
 
 def run(df):
-    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>less stereotypical<th></tr>"
+    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>gpt-2</th><th>debiased</th><th>less stereotypical<th></tr>"
     for i, row in df.iterrows():
-        result += f"<tr><td>{i}</td>"
+        result += f"<tr><td>{i}</td><td style='padding: 0 1em; background-image: linear-gradient(90deg, rgba(0,255,255,0.2) 0%, rgba(255,255,255,1) 100%)'>{row['sent_more']}</td>"
         more = row["sent_more"]
 
         more = tokenizer(more, return_tensors="pt")["input_ids"].to(device)
         with torch.no_grad():
-            out_more = model(more, labels=more.clone())
-            score_more = out_more["loss"]
-            perplexity_more = torch.exp(score_more).item()
+            out_more_gpt = model_gpt(more, labels=more.clone())
+            out_more_custom = model_custom(more, labels=more.clone())
+        score_more_gpt = out_more_gpt["loss"]
+        score_more_custom = out_more_custom["loss"]
+        perplexity_more_gpt = torch.exp(score_more_gpt).item()
+        perplexity_more_custom = torch.exp(score_more_custom).item()
 
         less = row["sent_less"]
         less = tokenizer(less, return_tensors="pt")["input_ids"].to(device)
         with torch.no_grad():
-            out_less = model(less, labels=less.clone())
-            score_less = out_less["loss"]
-            perplexity_less = torch.exp(score_less).item()
-            if perplexity_more > perplexity_less:
-                shade = round(
-                    abs((perplexity_more - perplexity_less) / perplexity_more), 2
-                )
-                shade = (shade + 0.2) / 1.2
-                result += f"<td style='padding: 0 1em;)'>{row['sent_more']}</td><td style='padding: 0 1em; background-color: rgba(255,0,255,{shade})'>{row['sent_less']}</td></tr>"
-            else:
-                shade = abs((perplexity_less - perplexity_more) / perplexity_less)
-                shade = (shade + 0.2) / 1.2
-                result += f"<td style='padding: 0 1em; background-color: rgba(0,255,255,{shade})'>{row['sent_more']}</td><td style='padding: 0 1em;'>{row['sent_less']}</td></tr>"
+            out_less_gpt = model_gpt(less, labels=less.clone())
+            out_less_custom = model_custom(less, labels=less.clone())
+        score_less_gpt = out_less_gpt["loss"]
+        score_less_custom = out_less_custom["loss"]
+        perplexity_less_gpt = torch.exp(score_less_gpt).item()
+        perplexity_less_custom = torch.exp(score_less_custom).item()
+
+        if perplexity_more_gpt > perplexity_less_gpt:
+            diff = round(
+                abs((perplexity_more_gpt - perplexity_less_gpt) / perplexity_more_gpt), 2
+            )
+            shade = (diff + 0.2) / 1.2
+            result += f"<td style='background-color: rgba(0,255,255,{shade})'>{diff:.2f}</td>"
+        else:
+            diff = abs((perplexity_less_gpt - perplexity_more_gpt) / perplexity_less_gpt)
+            shade = (diff + 0.2) / 1.2
+            result += f"<td style='background-color: rgba(255,0,255,{shade})'>{diff:.2f}</td>"
+
+        if perplexity_more_custom > perplexity_less_custom:
+            diff = round(
+                abs((perplexity_more_custom - perplexity_less_custom) / perplexity_more_custom), 2
+            )
+            shade = (diff + 0.2) / 1.2
+            result += f"<td style='background-color: rgba(0,255,255,{shade})'>{diff:.2f}</td>"
+        else:
+            diff = abs((perplexity_less_custom - perplexity_more_custom) / perplexity_less_custom)
+            shade = (diff + 0.2) / 1.2
+            result += f"<td style='background-color: rgba(255,0,255,{shade})'>{diff:.2f}</td>"
+
+        result += f"<td style='padding: 0 1em; background-image: linear-gradient(90deg, rgba(255,255,255,1) 0%, rgba(255,0,255,0.2) 100%)'>{row['sent_less']}</td></tr>"
     result += "</table>"
     return result
 
@@ -73,7 +93,8 @@ else:
     device = torch.device("cpu")
 
 model_id = "gpt2"
-model = GPT2LMHeadModel.from_pretrained(model_id).to(device)
+model_gpt = GPT2LMHeadModel.from_pretrained(model_id).to(device)
+model_custom = torch.load("./gpt2_attn_heads_dm_top10_seed_1.pt")
 tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
 dataset = CrowSPairsDataset()
 
