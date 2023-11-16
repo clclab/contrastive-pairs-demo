@@ -25,7 +25,7 @@ class CrowSPairsDataset(object):
 
 
 def run(df):
-    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>gpt-2</th><th>debiased</th><th>less stereotypical<th></tr>"
+    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>gpt2</th><th>gpt2-large</th><th>less stereotypical<th></tr>"
     for i, row in df.iterrows():
         result += f"<tr><td>{i}</td><td style='padding: 0 1em; background-image: linear-gradient(90deg, rgba(0,255,255,0.2) 0%, rgba(255,255,255,1) 100%)'>{row['sent_more']}</td>"
         more = row["sent_more"]
@@ -94,7 +94,8 @@ else:
 
 model_id = "gpt2"
 model_gpt = GPT2LMHeadModel.from_pretrained(model_id).to(device)
-model_custom = torch.load("./gpt2_attn_heads_dm_top10_seed_1.pt")
+#model_custom = torch.load("./gpt2_attn_heads_dm_top10_seed_1.pt")
+model_custom = GPT2LMHeadModel.from_pretrained("gpt2-large").to(device)
 tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
 dataset = CrowSPairsDataset()
 
