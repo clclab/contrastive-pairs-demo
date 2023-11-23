@@ -25,7 +25,7 @@ class CrowSPairsDataset(object):
 
 
 def run(df):
-    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>gpt2</th><th>gpt2-large</th><th>less stereotypical<th></tr>"
+    result = "<table><tr style='color: white; background-color: #555'><th>index</th><th>more stereotypical</th><th>gpt2<br>regular</th><th>gpt2<br>debiased</th><th>less stereotypical<th></tr>"
     for i, row in df.iterrows():
         result += f"<tr><td>{i}</td><td style='padding: 0 1em; background-image: linear-gradient(90deg, rgba(0,255,255,0.2) 0%, rgba(255,255,255,1) 100%)'>{row['sent_more']}</td>"
         more = row["sent_more"]
