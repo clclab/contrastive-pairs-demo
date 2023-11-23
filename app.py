@@ -94,8 +94,8 @@ else:
 
 model_id = "gpt2"
 model_gpt = GPT2LMHeadModel.from_pretrained(model_id).to(device)
-#model_custom = torch.load("./gpt2_attn_heads_dm_top10_seed_1.pt")
-model_custom = GPT2LMHeadModel.from_pretrained("gpt2-large").to(device)
+model_custom = GPT2LMHeadModel.from_pretrained("iabhijith/GPT2-small-debiased").to(device)
+
 tokenizer = GPT2TokenizerFast.from_pretrained(model_id)
 dataset = CrowSPairsDataset()
 
